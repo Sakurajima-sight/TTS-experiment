@@ -1,17 +1,3 @@
-# Copyright (c) 2024 Alibaba Inc (authors: Xiang Lyu, Zhihao Du)
-#               2025 Alibaba Inc (authors: Xiang Lyu, Yabin Li, Qihua)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import queue
 import random
 import time
@@ -20,7 +6,7 @@ from typing import Dict, Optional, Callable, List, Generator
 import torch
 from torch import nn
 import torch.nn.functional as F
-from transformers import Qwen2ForCausalLM
+from transformers import Qwen3ForCausalLM
 from torch.nn.utils.rnn import pad_sequence, unpad_sequence
 from utils.common import IGNORE_ID
 from transformer.label_smoothing_loss import LabelSmoothingLoss
@@ -279,15 +265,15 @@ class TransformerLM(torch.nn.Module):
             lm_input = self.speech_embedding.weight[top_ids].reshape(1, 1, -1)
 
 
-class Qwen2Encoder(torch.nn.Module):
+class Qwen3Encoder(torch.nn.Module):
     def __init__(self, pretrain_path: str):
         """
-        初始化Qwen2Encoder
+        初始化Qwen3Encoder
         参数:
             pretrain_path: 预训练模型的路径
         """
         super().__init__()
-        self.model = Qwen2ForCausalLM.from_pretrained(pretrain_path)
+        self.model = Qwen3ForCausalLM.from_pretrained(pretrain_path)
 
     def forward(self, xs: torch.Tensor, xs_lens: torch.Tensor):
         """
@@ -334,7 +320,7 @@ class Qwen2Encoder(torch.nn.Module):
         return xs, new_cache
 
 
-class Qwen2LM(TransformerLM):
+class Qwen3LM(TransformerLM):
     def __init__(
             self,
             llm_input_size: int,
